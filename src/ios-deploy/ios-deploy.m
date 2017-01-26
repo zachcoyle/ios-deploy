@@ -16,7 +16,8 @@
 #include <netinet/tcp.h>
 
 #include "MobileDevice.h"
-#include "errors.h"
+#import "errors.h"
+#import "device_db.h"
 
 #define PREP_CMDS_PATH @"/tmp/%@/fruitstrap-lldb-prep-cmds-"
 #define LLDB_SHELL @"lldb -s %@"
@@ -288,91 +289,16 @@ CFStringRef copy_xcode_path_for(CFStringRef subPath, CFStringRef search) {
     }
 }
 
-#define GET_FRIENDLY_MODEL_NAME(VALUE, INTERNAL_NAME, FRIENDLY_NAME)  if (kCFCompareEqualTo  == CFStringCompare(VALUE, CFSTR(INTERNAL_NAME), kCFCompareNonliteral)) { return CFSTR( FRIENDLY_NAME); };
-
-
-// Please ensure that device is connected or the name will be unknown
-const CFStringRef get_device_hardware_name(const AMDeviceRef device) {
-    CFStringRef model = AMDeviceCopyValue(device, 0, CFSTR("HardwareModel"));
-
-    if (model == NULL) {
-        return CFSTR("Unknown Device");
+device_desc get_device_desc(CFStringRef model) {
+    if (model != NULL) {
+        size_t sz = sizeof(device_db) / sizeof(device_desc);
+        for (size_t i = 0; i < sz; i ++) {
+            if (CFStringCompare(model, device_db[i].model, kCFCompareNonliteral | kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
+                return device_db[i];
+            }
+        }
     }
-
-    // iPod Touch
-
-    GET_FRIENDLY_MODEL_NAME(model, "N45AP",  "iPod Touch")
-    GET_FRIENDLY_MODEL_NAME(model, "N72AP",  "iPod Touch 2G")
-    GET_FRIENDLY_MODEL_NAME(model, "N18AP",  "iPod Touch 3G")
-    GET_FRIENDLY_MODEL_NAME(model, "N81AP",  "iPod Touch 4G")
-    GET_FRIENDLY_MODEL_NAME(model, "N78AP",  "iPod Touch 5G")
-    GET_FRIENDLY_MODEL_NAME(model, "N78AAP", "iPod Touch 5G")
-
-    // iPad
-
-    GET_FRIENDLY_MODEL_NAME(model, "K48AP",  "iPad")
-    GET_FRIENDLY_MODEL_NAME(model, "K93AP",  "iPad 2")
-    GET_FRIENDLY_MODEL_NAME(model, "K94AP",  "iPad 2 (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "K95AP",  "iPad 2 (CDMA)")
-    GET_FRIENDLY_MODEL_NAME(model, "K93AAP", "iPad 2 (Wi-Fi, revision A)")
-    GET_FRIENDLY_MODEL_NAME(model, "J1AP",   "iPad 3")
-    GET_FRIENDLY_MODEL_NAME(model, "J2AP",   "iPad 3 (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "J2AAP",  "iPad 3 (CDMA)")
-    GET_FRIENDLY_MODEL_NAME(model, "P101AP", "iPad 4")
-    GET_FRIENDLY_MODEL_NAME(model, "P102AP", "iPad 4 (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "P103AP", "iPad 4 (CDMA)")
-
-    // iPad Pro
-
-    GET_FRIENDLY_MODEL_NAME(model, "J98aAP",  "iPad Pro (12.9\")")
-    GET_FRIENDLY_MODEL_NAME(model, "J98aAP",  "iPad Pro (12.9\")")
-    GET_FRIENDLY_MODEL_NAME(model, "J127AP",  "iPad Pro (9.7\")")
-    GET_FRIENDLY_MODEL_NAME(model, "J128AP",  "iPad Pro (9.7\")")
-
-    // iPad Mini
-
-    GET_FRIENDLY_MODEL_NAME(model, "P105AP", "iPad mini")
-    GET_FRIENDLY_MODEL_NAME(model, "P106AP", "iPad mini (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "P107AP", "iPad mini (CDMA)")
-
-    // Apple TV
-
-    GET_FRIENDLY_MODEL_NAME(model, "K66AP",  "Apple TV 2G")
-    GET_FRIENDLY_MODEL_NAME(model, "J33AP",  "Apple TV 3G")
-    GET_FRIENDLY_MODEL_NAME(model, "J33IAP", "Apple TV 3.1G")
-    GET_FRIENDLY_MODEL_NAME(model, "J42dAP", "Apple TV 4G")
-
-    // iPhone
-
-    GET_FRIENDLY_MODEL_NAME(model, "M68AP", "iPhone")
-    GET_FRIENDLY_MODEL_NAME(model, "N82AP", "iPhone 3G")
-    GET_FRIENDLY_MODEL_NAME(model, "N88AP", "iPhone 3GS")
-    GET_FRIENDLY_MODEL_NAME(model, "N90AP", "iPhone 4 (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "N92AP", "iPhone 4 (CDMA)")
-    GET_FRIENDLY_MODEL_NAME(model, "N90BAP", "iPhone 4 (GSM, revision A)")
-    GET_FRIENDLY_MODEL_NAME(model, "N94AP", "iPhone 4S")
-    GET_FRIENDLY_MODEL_NAME(model, "N41AP", "iPhone 5 (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "N42AP", "iPhone 5 (Global/CDMA)")
-    GET_FRIENDLY_MODEL_NAME(model, "N48AP", "iPhone 5c (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "N49AP", "iPhone 5c (Global/CDMA)")
-    GET_FRIENDLY_MODEL_NAME(model, "N51AP", "iPhone 5s (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "N53AP", "iPhone 5s (Global/CDMA)")
-    GET_FRIENDLY_MODEL_NAME(model, "N61AP", "iPhone 6 (GSM)")
-    GET_FRIENDLY_MODEL_NAME(model, "N56AP", "iPhone 6 Plus")
-    GET_FRIENDLY_MODEL_NAME(model, "N71mAP", "iPhone 6s")
-    GET_FRIENDLY_MODEL_NAME(model, "N71AP", "iPhone 6s")
-    GET_FRIENDLY_MODEL_NAME(model, "N66AP", "iPhone 6s Plus")
-    GET_FRIENDLY_MODEL_NAME(model, "N66mAP", "iPhone 6s Plus")
-    GET_FRIENDLY_MODEL_NAME(model, "N69AP", "iPhone SE")
-    GET_FRIENDLY_MODEL_NAME(model, "N69uAP", "iPhone SE")
-
-    GET_FRIENDLY_MODEL_NAME(model, "D10AP", "iPhone 7")
-    GET_FRIENDLY_MODEL_NAME(model, "D101AP", "iPhone 7")
-    GET_FRIENDLY_MODEL_NAME(model, "D11AP", "iPhone 7 Plus")
-    GET_FRIENDLY_MODEL_NAME(model, "D111AP", "iPhone 7 Plus")
-    
-
-    return model;
+    return device_db[UNKNOWN_DEVICE_IDX];
 }
 
 char * MYCFStringCopyUTF8String(CFStringRef aString) {
@@ -396,23 +322,37 @@ CFStringRef get_device_full_name(const AMDeviceRef device) {
     CFStringRef full_name = NULL,
                 device_udid = AMDeviceCopyDeviceIdentifier(device),
                 device_name = NULL,
-                model_name = NULL;
+                model_name = NULL,
+                sdk_name = NULL,
+                arch_name = NULL;
 
     AMDeviceConnect(device);
 
-    device_name = AMDeviceCopyValue(device, 0, CFSTR("DeviceName")),
-    model_name = get_device_hardware_name(device);
+    device_name = AMDeviceCopyValue(device, 0, CFSTR("DeviceName"));
 
+    // Please ensure that device is connected or the name will be unknown
+    CFStringRef model = AMDeviceCopyValue(device, 0, CFSTR("HardwareModel"));
+    device_desc dev;
+    if (model != NULL) {
+        dev = get_device_desc(model);
+    } else {
+        dev= device_db[UNKNOWN_DEVICE_IDX];
+        model = dev.model;
+    }
+    model_name = dev.name;
+    sdk_name = dev.sdk;
+    arch_name = dev.arch;
+
+    NSLogVerbose(@"Hardware Model: %@", model);
     NSLogVerbose(@"Device Name: %@", device_name);
     NSLogVerbose(@"Model Name: %@", model_name);
+    NSLogVerbose(@"SDK Name: %@", sdk_name);
+    NSLogVerbose(@"Architecture Name: %@", arch_name);
 
-    if(device_name != NULL && model_name != NULL)
-    {
-        full_name = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@ '%@' (%@)"), model_name, device_name, device_udid);
-    }
-    else
-    {
-        full_name = CFStringCreateWithFormat(NULL, NULL, CFSTR("(%@ss)"), device_udid);
+    if (device_name != NULL) {
+        full_name = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@ (%@, %@, %@, %@) a.k.a. '%@'"), device_udid, model, model_name, sdk_name, arch_name, device_name);
+    } else {
+        full_name = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@ (%@, %@, %@, %@)"), device_udid, model, model_name, sdk_name, arch_name);
     }
 
     AMDeviceDisconnect(device);
@@ -973,7 +913,7 @@ void setup_dummy_pipe_on_stdin(int pfd[2]) {
 
 void setup_lldb(AMDeviceRef device, CFURLRef url) {
     CFStringRef device_full_name = get_device_full_name(device),
-    device_interface_name = get_device_interface_name(device);
+                device_interface_name = get_device_interface_name(device);
 
     AMDeviceConnect(device);
     assert(AMDeviceIsPaired(device));
