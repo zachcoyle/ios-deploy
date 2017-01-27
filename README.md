@@ -1,12 +1,14 @@
+[![Build Status](https://travis-ci.org/phonegap/ios-deploy.svg?branch=master)](https://travis-ci.org/phonegap/ios-deploy)
+
 ios-deploy
 ==========
 Install and debug iOS apps without using Xcode. Designed to work on un-jailbroken devices.
 
 ## Requirements
 
-* Mac OS X. Tested on 10.11 El Capitan and iOS 9.0
+* Mac OS X. Tested on 10.11 El Capitan, 10.12 Sierra, iOS 9.0 and iOS 10.0
 * You need to have a valid iOS Development certificate installed.
-* Xcode 6.4 or greater should be installed
+* Xcode 7 or greater should be installed (**NOT** Command Line Tools!)
 
 ## Roadmap
 
@@ -14,8 +16,13 @@ See our [milestones](https://github.com/phonegap/ios-deploy/milestones).
 
 Significant changes: 
 
-    1.8.0 will use an Xcode project instead of a Makefile (to prepare for 2.0.0)
-    2.0.0 will break out the commands into their own files, and create ios-deploy-lib for node.js use
+    1.8.0 will use an Xcode project instead of a Makefile (to prepare for 2.0.0) (1.x branch)
+    2.0.0 will break out the commands into their own files, and create ios-deploy-lib for node.js use (master branch)
+	
+## Development
+
+The legacy `1.x` version is under the `1.x` branch. Bug fixes for the `1.x` series will occur under there.
+The 'master' branch now contains the `2.x` series, and is the development branch. 	
 
 ## Installation
 =======
@@ -48,7 +55,7 @@ Run:
 npm install && npm test
 ```
 
-### OS X 10.11 El Capitan
+### OS X 10.11 El Capitan or greater
 
 If you are *not* using a node version manager like [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n), you may have to do either of these three things below when under El Capitan:
 
@@ -135,7 +142,3 @@ The included demo.app represents the minimum required to get code running on iOS
 
 * `make demo.app` will generate the demo.app executable. If it doesn't compile, modify `IOS_SDK_VERSION` in the Makefile.
 * `make debug` will install demo.app and launch a LLDB session.
-
-## Notes
-
-* With some modifications, it may be possible to use this without Xcode installed; however, you would need a copy of the relevant DeveloperDiskImage.dmg (included with Xcode). lldb would also run slower as symbols would be downloaded from the device on-the-fly.
