@@ -74,6 +74,7 @@ If you are *not* using a node version manager like [nvm](https://github.com/crea
         -t, --timeout <timeout>      number of seconds to wait for a device to be connected
         -u, --unbuffered             don't buffer stdout
         -n, --nostart                do not start the app when debugging
+        -N, --nolldb                 start debugserver only. do not run lldb
         -I, --noninteractive         start in non interactive mode (quit when app crashes or exits)
         -L, --justlaunch             just launch the app and exit lldb
         -v, --verbose                enable verbose output
@@ -108,6 +109,9 @@ The commands below assume that you have an app called `my.app` with bundle id `b
 
     // deploy and launch your app to a connected device, quit when app crashes or exits
     ios-deploy --noninteractive --debug --bundle my.app
+
+    // Debug your pre-installed app with an external debugger (e.g. lldb or IDA Pro)
+    ios-deploy --noinstall --nolldb --port 6666 --bundle my.app
 
     // Upload a file to your app's Documents folder
     ios-deploy --bundle_id 'bundle.id' --upload test.txt --to Documents/test.txt
