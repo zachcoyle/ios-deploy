@@ -1,8 +1,9 @@
-[![Build Status](https://travis-ci.org/phonegap/ios-deploy.svg?branch=master)](https://travis-ci.org/phonegap/ios-deploy)
+[![Build Status](https://travis-ci.org/ios-control/ios-deploy.svg?branch=master)](https://travis-ci.org/ios-control/ios-deploy)
 
 ios-deploy
 ==========
-Install and debug iOS apps without using Xcode. Designed to work on un-jailbroken devices.
+
+Install and debug iOS apps from the command line. Designed to work on un-jailbroken devices.
 
 ## Requirements
 
@@ -13,21 +14,14 @@ Install and debug iOS apps without using Xcode. Designed to work on un-jailbroke
 ## Roadmap
 
 See our [milestones](https://github.com/phonegap/ios-deploy/milestones).
-
-Significant changes: 
-
-    1.8.0 will use an Xcode project instead of a Makefile (to prepare for 2.0.0) (1.x branch)
-    2.0.0 will break out the commands into their own files, and create ios-deploy-lib for node.js use (master branch)
 	
 ## Development
 
-The legacy `1.x` version is under the `1.x` branch. Bug fixes for the `1.x` series will occur under there.
-The 'master' branch now contains the `2.x` series, and is the development branch. 	
+The 1.x branch has been archived (renamed for now), all development is to be on the master branch for simplicity, since the planned 2.x development (break out commands into their own files) has been abandoned for now.
 
 ## Installation
-=======
 
-ios-deploy installation is made simple using the node.js package manager.  If you use [Homebrew](http://brew.sh/), install [node.js](https://nodejs.org):
+ios-deploy installation is made simple using the node.js package manager.  If you use [Homebrew](https://brew.sh/), install [node.js](https://nodejs.org):
 
 ```
 brew install node
@@ -145,4 +139,5 @@ The included demo.app represents the minimum required to get code running on iOS
 * `make debug` will install demo.app and launch a LLDB session.
 
 ## Notes
+
 * `--detect_deadlocks` can help to identify an exact state of application's threads in case of a deadlock. It works like this: The user specifies the amount of time ios-deploy runs the app as usual. When the timeout is elapsed ios-deploy starts to print call-stacks of all threads every 5 seconds and the app keeps running. Comparing threads' call-stacks between each other helps to identify the threads which were stuck.
