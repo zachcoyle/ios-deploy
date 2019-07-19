@@ -5,16 +5,10 @@ var os = require('os');
 var child_process = require('child_process');
 var semver = require('semver')
 
-var XCODEBUILD_MIN_VERSION = 7.0;
-var XCODEBUILD_NOT_FOUND_MESSAGE = util.format('Please install Xcode version %s or greater from the Mac App Store.', XCODEBUILD_MIN_VERSION);
+var XCODEBUILD_NOT_FOUND_MESSAGE = 'Please install Xcode from the Mac App Store.';
 var TOOL = 'xcodebuild';
 
-var xcode_version = child_process.spawn(TOOL, ['-version']),
-	version_string = '';
-
-xcode_version.stdout.on('data', function (data) {
-	version_string += data;
-});
+var xcode_version = child_process.spawn(TOOL, ['-version']);
 
 xcode_version.stderr.on('data', function (data) {
 	console.log('stderr: ' + data);
@@ -44,7 +38,7 @@ xcode_version.on('close', function (code) {
 			console.log('!!!! WARNING:   `--unsafe-perm=true` flag when running `npm install`');
 			console.log('!!!! WARNING:   or else it will fail.');
 			console.log('!!!! WARNING: link:');
-			console.log('!!!! WARNING:   https://github.com/phonegap/ios-deploy#os-x-1011-el-capitan-or-greater');
+			console.log('!!!! WARNING:   https://github.com/ios-control/ios-deploy#os-x-1011-el-capitan-or-greater');
 			console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 		}
 
