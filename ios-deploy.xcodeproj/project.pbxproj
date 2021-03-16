@@ -399,6 +399,7 @@
 		7E7089971B587BF3004D23AA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
